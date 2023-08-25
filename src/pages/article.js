@@ -1,44 +1,31 @@
 import RootLayout from "@/components/Layout/RootLayout";
-import Banner from "@/components/UI/Banner";
 import ContentCard from "@/components/UI/ContentCard";
 import ContentContainer from "@/components/UI/ContentContainer";
-import { useRouter } from "next/router";
 import React from "react";
 
-const HomePage = ({ contents }) => {
-  const router = useRouter();
+const ArticlePage = ({ contents }) => {
   return (
-    <div className="w-full">
-      {/* banner section  */}
-      <Banner />
-      {/* contents section  */}
-
+    <div>
       <ContentContainer>
         {contents?.data &&
           contents?.data?.map((content) => (
             <ContentCard key={content._id} content={content} />
           ))}
       </ContentContainer>
-      <div className="text-center md:mt-12">
-        <button
-          onClick={() => router.push("/content")}
-          className="bg-black bg-opacity-30 backdrop-blur text-gray-300 p-2 rounded"
-        >
-          Load more
-        </button>
-      </div>
     </div>
   );
 };
 
-export default HomePage;
+export default ArticlePage;
 
-HomePage.getLayout = function getLayout(page) {
+ArticlePage.getLayout = function getLayout(page) {
   return <RootLayout>{page}</RootLayout>;
 };
 
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:5000/api/v1/content/latest");
+  const res = await fetch(
+    "http://localhost:5000/api/v1/content/category/article"
+  );
   const data = await res.json();
   return {
     props: {
