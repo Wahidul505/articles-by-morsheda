@@ -1,32 +1,31 @@
 import ProtectedLayout from "@/components/Layout/ProtectedLayout";
 import RootLayout from "@/components/Layout/RootLayout";
 import Loading from "@/components/UI/Loading";
-import { useCreateContentMutation } from "@/redux/features/content/contentApi";
+import { useEditContentMutation } from "@/redux/features/content/contentApi";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
-const WriteContentPage = () => {
-  const [contentInputs, setContentInputs] = useState([0]);
+const EditContentPage = ({ content }) => {
   const router = useRouter();
   const session = useSession();
   const { register, handleSubmit } = useForm();
-  const [createContent, { isError, isSuccess, isLoading }] =
-    useCreateContentMutation();
+  const [editContent, { isError, isSuccess, isLoading }] =
+    useEditContentMutation();
 
   const onSubmit = async (data) => {
     if (session.status === "unauthenticated") return;
-    data.status = "archive";
-    await createContent(data);
+    data.status = content?.data?.status;
+    await editContent({ id: content?.data?._id, payload: data });
   };
 
   useEffect(() => {
     isError && toast.error("Inform your Developer mate!");
     if (isSuccess) {
-      router.push("/admin/archive_contents");
-      toast.success("Created!");
+      router.push("/");
+      toast.success("Edited!");
     }
   }, [isError, isSuccess, router]);
 
@@ -48,7 +47,7 @@ const WriteContentPage = () => {
                 type="text"
                 placeholder="Required"
                 className="input input-bordered bg-transparent input-sm md:input-md"
-                defaultValue={"Morsheda Fariha"}
+                defaultValue={content?.data?.writer}
                 {...register("writer", { required: true })}
               />
             </div>
@@ -64,6 +63,8 @@ const WriteContentPage = () => {
                 id=""
                 className="bg-transparent border border-gray-500 p-1 rounded text-sm md:text-base"
                 {...register("category", { required: true })}
+                defaultValue={content?.data?.category}
+                defaultChecked={content?.data?.category}
               >
                 <option value="blog">Blog</option>
                 <option value="article">Article</option>
@@ -83,12 +84,13 @@ const WriteContentPage = () => {
               placeholder="Required"
               className="input input-bordered bg-transparent input-sm md:input-md"
               {...register("title", { required: true })}
+              defaultValue={content?.data?.title}
             />
           </div>
 
           {/* content fields  */}
-          {contentInputs.map((order) => (
-            <div key={order}>
+          {content?.data?.contents.map((content, index) => (
+            <div key={index}>
               {/* heading  */}
               <div className="form-control mb-2">
                 <label className="label">
@@ -99,8 +101,9 @@ const WriteContentPage = () => {
                 <textarea
                   type="text"
                   placeholder="Heading"
-                  className="textarea textarea-bordered bg-transparent input-sm "
-                  {...register(`contents.${order}.heading`)}
+                  className="textarea textarea-bordered bg-transparent input-sm"
+                  {...register(`contents.${index}.heading`)}
+                  defaultValue={content?.heading}
                 />
               </div>
               {/* text  */}
@@ -114,7 +117,8 @@ const WriteContentPage = () => {
                   type="text"
                   placeholder="Text"
                   className="textarea h-56 textarea-bordered bg-transparent input-sm"
-                  {...register(`contents.${order}.text`)}
+                  {...register(`contents.${index}.text`)}
+                  defaultValue={content?.text}
                 />
               </div>
             </div>
@@ -122,18 +126,7 @@ const WriteContentPage = () => {
 
           {/* buttons  */}
 
-          <div className="flex justify-between items-center w-full mt-8 md:mt-4">
-            <button
-              onClick={() =>
-                setContentInputs([
-                  ...contentInputs,
-                  contentInputs[contentInputs.length - 1] + 1,
-                ])
-              }
-              className=" text-gray-700 p-2 rounded text-sm md:text-base underline"
-            >
-              + Add section
-            </button>
+          <div className="flex justify-end items-center w-full mt-8 md:mt-4">
             <button
               type="submit"
               className="md:px-4 md:py-2 p-2 text-xs md:text-sm font-medium border rounded-lg focus:z-10 focus:ring-2 border-gray-700 text-gray-700 hover:text-white bg-rose-300 bg-opacity-40 w-32 md:w-40"
@@ -141,7 +134,7 @@ const WriteContentPage = () => {
               {isLoading ? (
                 <span className="loading loading-dots loading-sm"></span>
               ) : (
-                <span>Create as Archive</span>
+                <span>Save</span>
               )}
             </button>
           </div>
@@ -151,8 +144,31 @@ const WriteContentPage = () => {
   );
 };
 
-export default WriteContentPage;
+export default EditContentPage;
 
-WriteContentPage.getLayout = function getLayout(page) {
+EditContentPage.getLayout = function getLayout(page) {
   return <RootLayout>{page}</RootLayout>;
+};
+
+export const getStaticPaths = async () => {
+  const res = await fetch(
+    "http://https://articles-by-morsheda-server.vercel.app/api/v1/content"
+  );
+  const contents = await res.json();
+  const paths = contents?.data?.map((content) => ({
+    params: { editContentId: content._id.toString() },
+  }));
+  return { paths, fallback: true };
+};
+export const getStaticProps = async (context) => {
+  const { params } = context;
+  const res = await fetch(
+    `http://https://articles-by-morsheda-server.vercel.app/api/v1/content/${params.editContentId}`
+  );
+  const data = await res.json();
+  return {
+    props: {
+      content: data,
+    },
+  };
 };

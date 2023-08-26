@@ -6,7 +6,7 @@ import Image from "next/image";
 import React from "react";
 
 const ContentDetails = ({ content }) => {
-  const { title, category, writer, image, contents } = content?.data;
+  const { title, category, writer, contents } = content?.data;
   const { data, isLoading } = useGetLatestContentsQuery(undefined);
   if (isLoading) return <div></div>;
   return (
@@ -24,11 +24,7 @@ const ContentDetails = ({ content }) => {
       <div className="mt-16 flex justify-center">
         <Image
           alt=""
-          src={
-            image
-              ? image
-              : "https://i.ibb.co/d201SmL/aaron-burden-y02j-EX-B0-O0-unsplas.jpg"
-          }
+          src="https://i.ibb.co/d201SmL/aaron-burden-y02j-EX-B0-O0-unsplas.jpg"
           height={300}
           width={300}
           className="w-full md:w-2/5 h-60 md:h-full rounded"
@@ -74,10 +70,20 @@ ContentDetails.getLayout = function getLayout(page) {
   return <RootLayout>{page}</RootLayout>;
 };
 
-export const getServerSideProps = async (context) => {
+export const getStaticPaths = async () => {
+  const res = await fetch(
+    "http://https://articles-by-morsheda-server.vercel.app/api/v1/content"
+  );
+  const contents = await res.json();
+  const paths = contents?.data?.map((content) => ({
+    params: { contentId: content._id.toString() },
+  }));
+  return { paths, fallback: true };
+};
+export const getStaticProps = async (context) => {
   const { params } = context;
   const res = await fetch(
-    `http://localhost:5000/api/v1/content/${params.contentId}`
+    `http://https://articles-by-morsheda-server.vercel.app/api/v1/content/${params.contentId}`
   );
   const data = await res.json();
   return {

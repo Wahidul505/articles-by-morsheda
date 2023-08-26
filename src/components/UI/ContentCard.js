@@ -13,11 +13,7 @@ const ContentCard = ({ content }) => {
       <div className="overflow-hidden rounded">
         <Image
           alt=""
-          src={
-            content?.image
-              ? content?.image
-              : "https://i.ibb.co/d201SmL/aaron-burden-y02j-EX-B0-O0-unsplas.jpg"
-          }
+          src="https://i.ibb.co/d201SmL/aaron-burden-y02j-EX-B0-O0-unsplas.jpg"
           height={300}
           width={300}
           className="w-full h-60 hover:scale-105 transition-transform duration-300"

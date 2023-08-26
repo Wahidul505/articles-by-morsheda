@@ -14,6 +14,7 @@ const contentApi = api.injectEndpoints({
         url: `/${id}`,
         method: "PATCH",
         body: { status: status },
+        headers: { email: process.env.EMAIL, password: process.env.PASSWORD },
       }),
       invalidatesTags: ["contents"],
     }),
@@ -22,6 +23,16 @@ const contentApi = api.injectEndpoints({
         url: "/",
         method: "POST",
         body: payload,
+        headers: { email: process.env.EMAIL, password: process.env.PASSWORD },
+      }),
+      invalidatesTags: ["contents"],
+    }),
+    editContent: builder.mutation({
+      query: ({ id, payload }) => ({
+        url: `/${id}`,
+        method: "PATCH",
+        body: payload,
+        headers: { email: process.env.EMAIL, password: process.env.PASSWORD },
       }),
       invalidatesTags: ["contents"],
     }),
@@ -33,4 +44,5 @@ export const {
   useGetContentsByStatusQuery,
   useUpdateContentStatusMutation,
   useCreateContentMutation,
+  useEditContentMutation,
 } = contentApi;

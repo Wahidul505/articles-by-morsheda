@@ -24,7 +24,7 @@ ArticlePage.getLayout = function getLayout(page) {
 
 export const getStaticProps = async () => {
   const res = await fetch(
-    "http://localhost:5000/api/v1/content/category/article"
+    "http://https://articles-by-morsheda-server.vercel.app/api/v1/content/category/article"
   );
   const data = await res.json();
   return {
