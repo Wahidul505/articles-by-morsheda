@@ -6,20 +6,21 @@ import Image from "next/image";
 import React from "react";
 
 const ContentDetails = ({ content }) => {
-  const { title, category, writer, contents } = content?.data;
   const { data, isLoading } = useGetLatestContentsQuery(undefined);
   if (isLoading) return <div></div>;
   return (
     <div style={{ fontFamily: `'Ubuntu', 'sans-serif'` }} className="-mt-8">
       <div className="text-gray-500 text-center mb-3 text-lg md:text-xl">
-        {category.toUpperCase()}
+        {content?.data?.category.toUpperCase()}
       </div>
       <div className="text-gray-700 text-3xl md:text-5xl text-center mb-4">
-        {title}
+        {content?.data?.title}
       </div>
       <div className="text-center">
         <span className="text-gray-500">Written by</span>{" "}
-        <span className="text-gray-100 text-lg md:text-xl">{writer}</span>
+        <span className="text-gray-100 text-lg md:text-xl">
+          {content?.data?.writer}
+        </span>
       </div>
       <div className="mt-16 flex justify-center">
         <Image
@@ -31,8 +32,8 @@ const ContentDetails = ({ content }) => {
         />
       </div>
       <div className="mt-10 md:mt-20">
-        {contents &&
-          contents?.map((contentBody, index) => (
+        {content?.data?.contents &&
+          content?.data?.contents?.map((contentBody, index) => (
             <div key={contentBody._id || index} className="mb-10">
               {contentBody?.heading && (
                 <h2 className="text-gray-700 text-2xl md:text-3xl mb-3">
@@ -72,7 +73,7 @@ ContentDetails.getLayout = function getLayout(page) {
 
 export const getStaticPaths = async () => {
   const res = await fetch(
-    "http://https://articles-by-morsheda-server.vercel.app/api/v1/content"
+    "https://articles-by-morsheda-server.vercel.app/api/v1/content"
   );
   const contents = await res.json();
   const paths = contents?.data?.map((content) => ({
@@ -83,7 +84,7 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async (context) => {
   const { params } = context;
   const res = await fetch(
-    `http://https://articles-by-morsheda-server.vercel.app/api/v1/content/${params.contentId}`
+    `https://articles-by-morsheda-server.vercel.app/api/v1/content/${params.contentId}`
   );
   const data = await res.json();
   return {

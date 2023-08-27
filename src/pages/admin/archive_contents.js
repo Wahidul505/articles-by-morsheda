@@ -7,6 +7,12 @@ import React from "react";
 const ArchiveContentsPage = () => {
   const { data, isLoading } = useGetContentsByStatusQuery("archive");
   if (isLoading) return <div></div>;
+  if (data?.data?.length < 1)
+    return (
+      <div className="text-center text-gray-700 text-2xl">
+        No Archive Contents
+      </div>
+    );
   return (
     <ProtectedLayout>
       <div>

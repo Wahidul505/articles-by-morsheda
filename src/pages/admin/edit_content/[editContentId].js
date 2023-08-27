@@ -152,7 +152,7 @@ EditContentPage.getLayout = function getLayout(page) {
 
 export const getStaticPaths = async () => {
   const res = await fetch(
-    "http://https://articles-by-morsheda-server.vercel.app/api/v1/content"
+    "https://articles-by-morsheda-server.vercel.app/api/v1/content"
   );
   const contents = await res.json();
   const paths = contents?.data?.map((content) => ({
@@ -163,7 +163,7 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async (context) => {
   const { params } = context;
   const res = await fetch(
-    `http://https://articles-by-morsheda-server.vercel.app/api/v1/content/${params.editContentId}`
+    `https://articles-by-morsheda-server.vercel.app/api/v1/content/${params.editContentId}`
   );
   const data = await res.json();
   return {

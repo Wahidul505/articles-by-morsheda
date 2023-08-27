@@ -4,7 +4,12 @@ import ContentContainer from "@/components/UI/ContentContainer";
 import React from "react";
 
 const BlogPage = ({ contents }) => {
-  console.log(contents);
+  if (contents?.data?.length < 1)
+    return (
+      <div className="text-2xl text-gray-700 text-center">
+        Stay tuned. Blogs will be posted soon...
+      </div>
+    );
   return (
     <div>
       <ContentContainer>
@@ -25,7 +30,7 @@ BlogPage.getLayout = function getLayout(page) {
 
 export const getStaticProps = async () => {
   const res = await fetch(
-    "http://https://articles-by-morsheda-server.vercel.app/api/v1/content/category/blog"
+    "https://articles-by-morsheda-server.vercel.app/api/v1/content/category/blog"
   );
   const data = await res.json();
   return {
