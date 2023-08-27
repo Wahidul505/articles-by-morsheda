@@ -4,7 +4,7 @@ const Banner = () => {
   return (
     <div className="mb-96">
       <div
-        className="h-64 md:h-80 bg-cover bg-center flex items-end fixed right-0 left-0 top-16"
+        className="h-64 md:h-80 bg-cover bg-center flex items-end absolute right-0 left-0 top-16"
         style={{
           backgroundImage: `url('https://i.ibb.co/QNbvVmM/sixteen-miles-out-Q1-N5g-E8-Kxf-M-un.jpg')`,
           fontFamily: "'Handlee', 'cursive'",

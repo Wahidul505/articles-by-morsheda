@@ -7,6 +7,7 @@ const nextConfig = {
   env: {
     EMAIL: process.env.EMAIL,
     PASSWORD: process.env.PASSWORD,
+    SECRET: process.env.SECRET,
   },
 };
 
